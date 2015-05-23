@@ -51,7 +51,6 @@ public class ForwardDirectionalLight extends Shader
 		setUniform("specularPower", material.getSpecularPower());
 
 		setUniform("camera", getRenderingEngine().getMainCamera().getPos());
-		System.out.println(getRenderingEngine().getLight().getClass().getName());
 		setUniform("directionalLight", (DirectionalLight)getRenderingEngine().getLight());
 	}
 }

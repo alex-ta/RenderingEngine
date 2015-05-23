@@ -7,7 +7,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
-import com.engine.Components.Attenuation;
 import com.engine.Components.DirectionalLight;
 import com.engine.Components.Light;
 import com.engine.Components.PointLight;
@@ -126,13 +125,10 @@ public abstract class Shader {
 	{
 		setUniform(uniformName + ".base", (Light) pointlight);
 		setUniform(uniformName + ".position",pointlight.getPosition());
-		setUniform(uniformName+".atten",pointlight.getAttenuation());
+		setUniform(uniformName+".atten.constant",pointlight.getConstant());
+		setUniform(uniformName+".atten.linear",pointlight.getLinear());
+		setUniform(uniformName+".atten.exponent",pointlight.getExponent());
 		setUniform(uniformName+".range",pointlight.getRange());
-	}
-	public void setUniform(String uniformName,Attenuation atten){
-		setUniform(uniformName+".constant",atten.getConstant());
-		setUniform(uniformName+".linear",atten.getLinear());
-		setUniform(uniformName+".exponent",atten.getExponent());
 	}
 	public void setUniform(String uniformName, SpotLight spotLight){
 		setUniform(uniformName+".pointLight",(PointLight)spotLight);

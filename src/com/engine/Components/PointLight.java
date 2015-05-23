@@ -3,24 +3,22 @@ import com.engine.Math.Vector3D;
 import com.engine.Shaders.ForwardPointLight;
 
 public class PointLight extends Light {
-	private Attenuation atten;
+	private float constant;
+	private float linear;
+	private float exponent;
 	private Vector3D position;
 	private float range;
 	
-	public PointLight(Vector3D color,float intensity,Attenuation atten,Vector3D position,float range){
+	public PointLight(Vector3D color,float intensity,float constant,float linear, float exponent,Vector3D position,float range){
 	super(color,intensity);
-	this.atten = atten;
+	this.constant = constant;
+	this.linear = linear;
+	this.exponent = exponent;
 	this.position = position;
 	this.range = range;
 	this.setShader(ForwardPointLight.getShader());
 	}
 
-	public Attenuation getAttenuation() {
-		return atten;
-	}
-	public void setAttenuation(Attenuation atten) {
-		this.atten = atten;
-	}
 	public Vector3D getPosition() {
 		return position;
 	}
@@ -32,5 +30,29 @@ public class PointLight extends Light {
 	}
 	public void setRange(float range) {
 		this.range = range;
+	}
+
+	public float getConstant() {
+		return constant;
+	}
+
+	public void setConstant(float constant) {
+		this.constant = constant;
+	}
+
+	public float getLinear() {
+		return linear;
+	}
+
+	public void setLinear(float linear) {
+		this.linear = linear;
+	}
+
+	public float getExponent() {
+		return exponent;
+	}
+
+	public void setExponent(float exponent) {
+		this.exponent = exponent;
 	}
 }
