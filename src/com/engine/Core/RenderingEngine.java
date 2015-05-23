@@ -5,9 +5,11 @@ import static org.lwjgl.opengl.GL11.*;
 import java.util.LinkedList;
 
 import com.engine.Components.Camera;
+import com.engine.Components.DirectionalLight;
 import com.engine.Components.Light;
 import com.engine.Components.NormalLight;
 import com.engine.Math.Vector3D;
+import com.engine.Shaders.ForwardDirectionalLight;
 import com.engine.Shaders.ForwardNormalLight;
 import com.engine.Shaders.Shader;
 
@@ -18,8 +20,11 @@ public class RenderingEngine {
 	
 	// permanent Structures
 	private LinkedList<Light> lights;
-	public Vector3D lit = new Vector3D(0.1f,0.1f,0.1f);
-	
+	// Added !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	private Light lit = new NormalLight(0.0f,0.0f,0.0f,0.0f);
+	private DirectionalLight directional = new DirectionalLight(new Vector3D(0,0,1), 0.4f, new Vector3D(1,1,1));
+	//	public DirectionalLight directional2 = new DirectionalLight8new Vector3D(1,0,0, 0.4f, new Vector3D(-1,1,-1));
+
 	
 	public RenderingEngine(){
 				// clearcolor setzten (schwarz)
@@ -41,20 +46,25 @@ public class RenderingEngine {
 	public void render(Game game){
 		clearLights();
 		game.addToREngine(this);
-		Shader s =ForwardNormalLight.getShader();
+		// Added !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		//Shader s =ForwardNormalLight.getShader();
+		Shader s = ForwardDirectionalLight.getShader();
+		// Added !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		s.setRenderingEngine(this);
-		game.render(s);
+		// Added !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		this.activeLight = lit;
+		game.render(lit.getShader());
 		
 		
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE,GL_ONE);
 		glDepthMask(false);
 		glDepthFunc(GL_EQUAL);
-		
-		for(Light l: lights){
-			this.activeLight = l;
-			game.render(l.getShader());
-		}
+		// Hier funktioniert das rendern noch nicht !!!
+	
+		this.activeLight = directional;
+		game.render(directional.getShader());
+		//game.render(lit.getShader());
 		
 		glDepthFunc(GL_LESS);
 		glDepthMask(true);
@@ -84,6 +94,7 @@ public class RenderingEngine {
 	public Camera getMainCamera() {
 		return mainCamera;
 	}
+	
 
 	public void setMainCamera(Camera mainCamera) {
 		this.mainCamera = mainCamera;

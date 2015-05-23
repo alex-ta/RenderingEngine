@@ -29,7 +29,8 @@ public void updateUniforms(Transform transform, Material material) {
 	material.getTexture().bind();
 	
 	setUniform("MVP",projectedMatrix);
-	setUniform("normlight",getRenderingEngine().lit);
+	// Added !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	setUniform("normlight",getRenderingEngine().getLight().getColor());
 }
 
 }

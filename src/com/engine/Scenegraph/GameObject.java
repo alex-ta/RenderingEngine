@@ -26,7 +26,7 @@ public class GameObject {
 		children.add(child);
 	}
 	
-	public void addCompontent(GameComponent component){
+	public void addComponent(GameComponent component){
 		components.add(component);
 	}
 	

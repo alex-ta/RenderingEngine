@@ -33,15 +33,16 @@ public class TestGame extends Game {
 		MeshRenderer renderer = new MeshRenderer(mesh,material);
 		
 		GameObject plane = new GameObject();
-		plane.addCompontent(renderer);
+		plane.addComponent(renderer);
 		plane.getTransform().setTranslation(0,-1,5);
 		
 		NormalLight l = new NormalLight(0.8f,0.8f,0.8f,0.8f);
-		//DirectionalLight l = new DirectionalLight(new Vector3D(0,0,1),0.4f,new Vector3D(1,1,1));
-		//PointLight pl = new PointLight(new Vector3D(0,1,0),0.4f,new Attenuation(0,0,1),new Vector3D(5,0,5),100);
+		DirectionalLight li = new DirectionalLight(new Vector3D(0,0,1),0.4f,new Vector3D(1,1,1));
+		PointLight pl = new PointLight(new Vector3D(0,1,0),0.4f,new Attenuation(0,0,1),new Vector3D(5,0,5),100);
 		
-		plane.addCompontent(l);
-		//plane.addCompontent(pl);
+		plane.addComponent(l);
+		plane.addComponent(li);
+		plane.addComponent(pl);
 		
 		addChild(plane);
 		
