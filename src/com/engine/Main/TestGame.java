@@ -1,10 +1,12 @@
 package com.engine.Main;
 
+import com.engine.Components.Camera;
 import com.engine.Components.DirectionalLight;
 import com.engine.Components.NormalLight;
 import com.engine.Components.PointLight;
 import com.engine.Components.SpotLight;
 import com.engine.Core.Game;
+import com.engine.Core.Window;
 import com.engine.Desing.Material;
 import com.engine.Desing.Texture;
 import com.engine.Math.Vector3D;
@@ -34,17 +36,29 @@ public class TestGame extends Game {
 		MeshRenderer renderer = new MeshRenderer(mesh,material);
 		
 		GameObject plane = new GameObject();
-		plane.addCompontent(renderer);
 		plane.getTransform().setTranslation(0,-1,5);
+		plane.addCompontent(renderer);
+		Camera camera = new Camera((float)Math.toRadians(70f), (float)Window.getWidth()/(float)Window.getHeight(), 0.1f, 1000);
+		
+		
+		
 		
 		DirectionalLight l = new DirectionalLight(new Vector3D(0,0,1),0.4f,new Vector3D(1,1,1));
-		PointLight pl = new PointLight(new Vector3D(0,1,0),0.4f,0,0,1,new Vector3D(5,0,5),100);
-		SpotLight sl = new SpotLight(new Vector3D(1,1,1),0.4f,0,0,0.1f,new Vector3D(5,0,5),100,new Vector3D(1,0,0),0.7f);
+		PointLight pl = new PointLight(new Vector3D(0,1,0),0.4f,new Vector3D(0,0,1));
+		SpotLight sl = new SpotLight(new Vector3D(1,1,1),0.4f,new Vector3D(0,0,0.1f),0.7f);
 		
-		plane.addCompontent(l);
-		plane.addCompontent(pl);
-		plane.addCompontent(sl);
+		GameObject light = new GameObject();
+		GameObject light2 = new GameObject();
 		
+		light.addCompontent(l);
+		light2.addCompontent(pl);
+		light.addCompontent(sl);
+		
+		light2.getTransform().setTranslation(5, 0, 5);
+		
+		plane.addChild(light2);
+		plane.addChild(light);
+		plane.addCompontent(camera);
 		addChild(plane);
 		
 		

@@ -91,6 +91,8 @@ public class Vector2D {
 	public Vector2D mul(float v){
 		return new Vector2D(x*v,y*v);
 	}
-	
+	public float max(){
+		return Math.max(x, y);
+	}
 	
 }

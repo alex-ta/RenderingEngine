@@ -43,6 +43,7 @@ public class CoreEngine {
 			
 			
 			while((time.next())){
+			
 			time.renderAll();	
 			if(Window.isCloseRequest()){
 			stop();	

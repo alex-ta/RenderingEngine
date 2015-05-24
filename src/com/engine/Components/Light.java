@@ -3,10 +3,11 @@ import com.engine.Scenegraph.*;
 import com.engine.Shaders.ForwardNormalLight;
 import com.engine.Shaders.Shader;
 import com.engine.Core.RenderingEngine;
+import com.engine.Input.InputHandler;
 import com.engine.Math.Transform;
 import com.engine.Math.Vector3D;
 
-public abstract class Light implements GameComponent {
+public abstract class Light extends GameComponent {
 private Vector3D color;
 private float intensity;
 private Shader shader;
@@ -15,6 +16,7 @@ public Light(Vector3D color,float intensity){
 	this.color = color;
 	this.intensity = intensity;
 	this.setShader(ForwardNormalLight.getShader());
+	
 }
 
 public Vector3D getColor() {
@@ -42,16 +44,13 @@ public Shader getShader(){
 }
 
 @Override
-public void update(Transform transform) {
-	// TODO Auto-generated method stub
-	
-}
+public void update() {}
 
 @Override
-public void render(Transform transform, Shader shader) {
-	// TODO Auto-generated method stub
-	
-}
+public void render(Shader shader) {}
+
+@Override
+public void input(InputHandler input){}
 
 @Override
 public void addToREngine(RenderingEngine engine) {

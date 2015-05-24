@@ -14,7 +14,7 @@ import com.engine.Shaders.Shader;
 
 public class RenderingEngine {
 	
-	private Camera mainCamera;
+	private Camera camera;
 	private Light activeLight;
 	private Light normlight;
 	
@@ -33,7 +33,6 @@ public class RenderingEngine {
 				//glEnable(GL_DEPTH_CLAMP);
 				glEnable(GL_TEXTURE_2D);
 				System.out.println(getOGLVersion());
-				mainCamera = new Camera((float)Math.toRadians(70f), (float)Window.getWidth()/(float)Window.getHeight(), 0.1f, 1000);
 				lights = new LinkedList<Light>();
 				normlight = NormalLight.getInstance(this);
 	}
@@ -81,11 +80,11 @@ public class RenderingEngine {
 	}
 
 	public Camera getMainCamera() {
-		return mainCamera;
+		return camera;
 	}
 
-	public void setMainCamera(Camera mainCamera) {
-		this.mainCamera = mainCamera;
+	public void setMainCamera(Camera camera) {
+		this.camera = camera;
 	}
 
 	public Light getLight() {
@@ -96,6 +95,10 @@ public class RenderingEngine {
 		this.lights.add(light);
 	}
 	
+	public void addCamera(Camera camera) {
+	this.camera = camera;
+	}
+	
 	private void clearLights(){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		lights.clear();
@@ -104,4 +107,8 @@ public class RenderingEngine {
 	public Light getNormalLight() {
 		return normlight;
 	}
+
+
+
+	
 }

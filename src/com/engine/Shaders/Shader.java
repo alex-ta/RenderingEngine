@@ -124,7 +124,7 @@ public abstract class Shader {
 	public void setUniform(String uniformName, PointLight pointlight)
 	{
 		setUniform(uniformName + ".base", (Light) pointlight);
-		setUniform(uniformName + ".position",pointlight.getPosition());
+		setUniform(uniformName + ".position",pointlight.getParent().getTransform().getTranslation());
 		setUniform(uniformName+".atten.constant",pointlight.getConstant());
 		setUniform(uniformName+".atten.linear",pointlight.getLinear());
 		setUniform(uniformName+".atten.exponent",pointlight.getExponent());

@@ -3,6 +3,7 @@ package com.engine.Scenegraph;
 import java.util.ArrayList;
 
 import com.engine.Core.RenderingEngine;
+import com.engine.Input.InputHandler;
 import com.engine.Math.Transform;
 import com.engine.Shaders.Shader;
 
@@ -22,18 +23,21 @@ public class GameObject {
 		return transform;
 	}
 	
-	public void addChild(GameObject child){
+	public GameObject addChild(GameObject child){
 		children.add(child);
+		return this;
 	}
 	
-	public void addCompontent(GameComponent component){
+	public GameObject addCompontent(GameComponent component){
 		components.add(component);
+		component.setParent(this);
+		return this;
 	}
 	
 	public void update(){
 		
 		for(GameComponent component: components){
-			component.update(transform);
+			component.update();
 		}
 		
 		for(GameObject child:children){
@@ -42,10 +46,20 @@ public class GameObject {
 	}
 	public void render(Shader shader){
 		for(GameComponent component: components){
-			component.render(transform,shader);
+			component.render(shader);
 		}
-		for(GameObject child:children)
+		for(GameObject child:children){
 			child.render(shader);
+		}
+	}
+	
+	public void input(InputHandler input){
+		for(GameComponent component: components){
+			component.input(input);
+		}
+		for(GameObject child:children){
+			child.input(input);
+		}
 	}
 
 	public void addToREngine(RenderingEngine engine) {

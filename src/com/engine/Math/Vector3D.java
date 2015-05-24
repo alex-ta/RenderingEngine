@@ -68,24 +68,20 @@ public class Vector3D {
 		return x==v.x && y == v.y && z == v.z;
 	}
 	
-	public Vector3D rotate(float angle, Vector3D axe){
-		float hrad = (float)Math.toRadians(angle/2);
-		float hcos = (float)Math.cos(hrad);
-		float hsin = (float)Math.sin(hrad);
+	public Vector3D rotate(Quaternion rotation){
 		
-		float rX = axe.x * hsin;
-		float rY = axe.y * hsin;
-		float rZ = axe.z * hsin;
-		float rW = hcos;
-		
-		Quaternion rotate = new Quaternion(rX,rY,rZ,rW);
-		Quaternion conjugate = rotate.conjugate();
-		Quaternion w = rotate.mul(this).mul(conjugate);
+		Quaternion conjugate = rotation.conjugate();
+		Quaternion w = rotation.mul(this).mul(conjugate);
 		x=w.x;
 		y=w.y;
 		z=w.z;
 		
 		return this;
+	}
+	
+	public Vector3D rotate(Vector3D axe, float angle){	
+		Quaternion rotate = new Quaternion().initRotation(angle, axe);
+		return this.rotate(rotate);
 	}
 	
 	public Vector2D getXY(){return new Vector2D(x,y);}
@@ -123,10 +119,12 @@ public class Vector3D {
 	public Vector3D mul(float v){
 		return new Vector3D(x*v,y*v,z*v);
 	}
-	
 	public Vector3D abs()
 	{
 		return new Vector3D(Math.abs(x), Math.abs(y), Math.abs(z));
+	}
+	public float max(){
+		return Math.max(x, Math.max(y, z));
 	}
 	
 }

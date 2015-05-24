@@ -9,8 +9,6 @@ import com.engine.Shaders.Shader;
 public abstract class Game{
 	private InputHandler input;
 	private Camera camera; 
-	private final float rotspeed = 0.9f;
-	private final float movespeed = 0.006f;
 	private GameObject root;	
 	
 	public Game(GameObject obj){
@@ -24,22 +22,7 @@ public abstract class Game{
 	
 	public void input(){
 		input.update();
-		
-		if(input.isMoveleft()){
-			camera.move(camera.getLeft(),movespeed);
-		}
-		if(input.isMoveright()){
-			camera.move(camera.getRight(),movespeed);
-		}
-		if(input.isMoveforward()){
-			camera.move(camera.getForward(),movespeed);
-		}
-		if(input.isMovebackwards()){
-			camera.move(camera.getForward(),-movespeed);
-		}
-		
-		camera.rotateY(MouseW.getDeltaMovement().y*rotspeed);
-		camera.rotateX(MouseW.getDeltaMovement().x*rotspeed);
+		root.input(input);
 	}
 	protected Camera getCamera() {
 		return camera;
