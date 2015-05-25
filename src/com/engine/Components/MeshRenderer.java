@@ -3,6 +3,7 @@ package com.engine.components;
 import com.engine.Shader.Shader;
 import com.engine.rendering.objects.Material;
 import com.engine.rendering.objects.Mesh;
+import com.engine.rendering.objects.RenderingEngine;
 
 public class MeshRenderer extends GameComponent
 {
@@ -16,10 +17,18 @@ public class MeshRenderer extends GameComponent
 	}
 
 	@Override
-	public void render(Shader shader)
+	public void render(Shader shader,RenderingEngine engine)
 	{
 		shader.bind();
-		shader.updateUniforms(getTransform(), material);
+		shader.updateUniforms(getTransform(), material, engine);
 		mesh.draw();
+	}
+
+	@Override
+	public void input(float delta) {
+	}
+
+	@Override
+	public void update(float delta) {
 	}
 }

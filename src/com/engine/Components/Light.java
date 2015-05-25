@@ -51,4 +51,14 @@ public class Light extends GameComponent
 	{
 		this.intensity = intensity;
 	}
+
+	@Override
+	public void input(float delta) {
+	}
+	@Override
+	public void update(float delta) {
+	}
+	@Override
+	public void render(Shader shader, RenderingEngine engine) {
+	}
 }

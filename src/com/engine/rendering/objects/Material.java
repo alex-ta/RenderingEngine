@@ -1,69 +1,46 @@
 package com.engine.rendering.objects;
 
+import java.util.HashMap;
+
 import com.math.Vector3D;
 
 public class Material
 {
-	private Texture texture;
-	private Vector3D color;
-	private float specularIntensity;
-	private float specularPower;
+	private HashMap<String,Texture> textureMap;
+	private HashMap<String,Vector3D> colorMap;
+	private HashMap<String,Float> intensityMap;
 	
-	public Material(Texture texture)
-	{
-		this(texture, new Vector3D(1,1,1));
-	}
-	
-	public Material(Texture texture, Vector3D color)
-	{
-		this(texture, color, 2, 32);
+	public Material(){
+		textureMap = new HashMap<String,Texture>();
+		colorMap = new HashMap<String,Vector3D>();
+		intensityMap = new HashMap<String,Float>();
 	}
 	
-	public Material(Texture texture, Vector3D color, float specularIntensity, float specularPower)
-	{
-		this.texture = texture;
-		this.color = color;
-		this.specularIntensity = specularIntensity;
-		this.specularPower = specularPower;
+	public void addTexture(String name,Texture texture){
+		textureMap.put(name, texture);
 	}
-
-	public Texture getTexture()
-	{
-		return texture;
+	public Texture getTexture(String name){
+		if(textureMap.containsKey(name))
+		return textureMap.get(name);
+		System.out.println("No Value found for "+name+" returned test.png");
+		return new Texture("test.png");
 	}
-
-	public void setTexture(Texture texture)
-	{
-		this.texture = texture;
+	public void addColor(String name,Vector3D color){
+		colorMap.put(name, color);
 	}
-
-	public Vector3D getColor()
-	{
-		return color;
+	public Vector3D getColor(String name){
+		if(colorMap.containsKey(name))
+		return colorMap.get(name);
+		System.out.println("No Value found for "+name+" returned 0 Vector");
+		return new Vector3D(0,0,0);
 	}
-
-	public void setColor(Vector3D color)
-	{
-		this.color = color;
+	public void addFloat(String name,float intensity){
+		intensityMap.put(name, intensity);
 	}
-
-	public float getSpecularIntensity()
-	{
-		return specularIntensity;
-	}
-
-	public void setSpecularIntensity(float specularIntensity)
-	{
-		this.specularIntensity = specularIntensity;
-	}
-
-	public float getSpecularPower()
-	{
-		return specularPower;
-	}
-
-	public void setSpecularPower(float specularPower)
-	{
-		this.specularPower = specularPower;
+	public float getFloat(String name){
+		if(intensityMap.containsKey(name))
+		return intensityMap.get(name);
+		System.out.println("No value found for "+name+" returned 0 Value");
+		return 0f;
 	}
 }

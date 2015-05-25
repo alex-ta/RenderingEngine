@@ -1,6 +1,7 @@
 package com.engine.Shader;
 
 import com.engine.rendering.objects.Material;
+import com.engine.rendering.objects.RenderingEngine;
 import com.math.Matrix;
 import com.math.Transform;
 
@@ -22,14 +23,14 @@ public class ForwardNormalLight extends Shader{
 		}
 
 		@Override
-		public void updateUniforms(Transform transform, Material material) {
+		public void updateUniforms(Transform transform, Material material,RenderingEngine engine) {
 			
 			Matrix worldMatrix = transform.getTransformation();
-			Matrix projectedMatrix = getRenderingEngine().getMainCamera().getViewProjection().mul(worldMatrix);
-			material.getTexture().bind();
+			Matrix projectedMatrix = engine.getMainCamera().getViewProjection().mul(worldMatrix);
+			material.getTexture("diffuse").bind();
 			
 			setUniform("MVP",projectedMatrix);
-			setUniform("normlight",getRenderingEngine().getNormalLight());
+			setUniform("normlight",engine.getNormalLight());
 		}
 
 		}

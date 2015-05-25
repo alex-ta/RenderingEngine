@@ -17,9 +17,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.HashMap;
 
-public class Shader
+public abstract class Shader
 {
-	private RenderingEngine renderingEngine;
 	private int program;
 	private HashMap<String, Integer> uniforms;
 	
@@ -40,10 +39,7 @@ public class Shader
 		glUseProgram(program);
 	}
 
-	public void updateUniforms(Transform transform, Material material)
-	{
-		
-	}
+	public abstract void updateUniforms(Transform transform, Material material,RenderingEngine engine);
 	
 	public void addUniform(String uniform)
 	{
@@ -203,15 +199,5 @@ public class Shader
 		setUniformPointLight(uniformName + ".pointLight", spotLight);
 		setUniform(uniformName + ".direction", spotLight.getDirection());
 		setUniformf(uniformName + ".cutoff", spotLight.getCutoff());
-	}
-
-	public void setRenderingEngine(RenderingEngine renderingEngine)
-	{
-		this.renderingEngine = renderingEngine;
-	}
-
-	public RenderingEngine getRenderingEngine()
-	{
-		return renderingEngine;
 	}
 }

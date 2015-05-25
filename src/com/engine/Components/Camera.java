@@ -1,9 +1,9 @@
 package com.engine.components;
 
+import com.engine.Shader.Shader;
 import com.engine.core.*;
 import com.engine.rendering.objects.RenderingEngine;
 import com.math.Matrix;
-import com.math.Vector2D;
 import com.math.Vector3D;
 
 public class Camera extends GameComponent
@@ -57,5 +57,13 @@ public class Camera extends GameComponent
 	public void move(Vector3D dir, float amt)
 	{
 		getTransform().setPos(getTransform().getPos().add(dir.mul(amt)));
+	}
+
+	@Override
+	public void update(float delta) {
+	}
+
+	@Override
+	public void render(Shader shader, RenderingEngine engine) {
 	}
 }

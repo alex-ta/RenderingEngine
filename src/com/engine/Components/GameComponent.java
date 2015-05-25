@@ -9,9 +9,9 @@ public abstract class GameComponent
 {
 	private GameObject parent;
 
-	public void input(float delta) {}
-	public void update(float delta) {}
-	public void render(Shader shader) {}
+	public abstract void input(float delta);
+	public abstract void update(float delta);
+	public abstract void render(Shader shader, RenderingEngine engine);
 
 	public void setParent(GameObject parent)
 	{
