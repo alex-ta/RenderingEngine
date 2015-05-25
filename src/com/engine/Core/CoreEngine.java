@@ -1,72 +1,117 @@
-package com.engine.Core;
+package com.engine.core;
 
-public class CoreEngine {
-	
-	private static boolean running;
-	private int renderdelay = 1;
+import com.engine.rendering.objects.RenderingEngine;
+
+public class CoreEngine
+{
+	private boolean isRunning;
 	private Game game;
-	private RenderingEngine Rengine;
+	private RenderingEngine renderingEngine;
+	private int width;
+	private int height;
+	private double frameTime;
+	private Input input;
 	
-	public CoreEngine (Game game){
-		running = false;
+	public CoreEngine(int width, int height, double framerate, Game game)
+	{
+		this.isRunning = false;
 		this.game = game;
-		this.Rengine = new RenderingEngine();
-		game.setCamera(Rengine.getMainCamera());	
+		this.width = width;
+		this.height = height;
+		this.frameTime = 1.0/framerate;
+		input = new Input();
 	}
-	
-	
-	
-	
-	public void start(float timesRender){
-		if(running)
-			return;
-		run(timesRender);
-	}
-	
-	public void stop(){
-		if(!running)
-			return;
-		running = false;
-	}	
-	
-	private void run(float timesRender){
-		running = true;
-		Timer time = new Timer(timesRender);
-		while(running)
-		{
 
-			render();
+	public void createWindow(String title)
+	{
+		Window.createWindow(width, height, title);
+		this.renderingEngine = new RenderingEngine();
+	}
+
+	public void start()
+	{
+		if(isRunning)
+			return;
+		
+		run();
+	}
+	
+	public void stop()
+	{
+		if(!isRunning)
+			return;
+		
+		isRunning = false;
+	}
+	
+	private void run()
+	{
+		isRunning = true;
+		
+		int frames = 0;
+		long frameCounter = 0;
+
+		game.init();
+
+		double lastTime = Time.getTime();
+		double unprocessedTime = 0;
+		
+		while(isRunning)
+		{
+			boolean render = false;
+
+			double startTime = Time.getTime();
+			double passedTime = startTime - lastTime;
+			lastTime = startTime;
 			
-			time.updateAll();
-			game.input();
-			game.update();
+			unprocessedTime += passedTime;
+			frameCounter += passedTime;
 			
-			
-			while((time.next())){
-			
-			time.renderAll();	
-			if(Window.isCloseRequest()){
-			stop();	
+			while(unprocessedTime > frameTime)
+			{
+				render = true;
+				
+				unprocessedTime -= frameTime;
+				
+				if(Window.isCloseRequested())
+					stop();
+
+				game.input((float)frameTime);
+				input.update();
+				
+				game.update((float)frameTime);
+				
+				if(frameCounter >= 1.0)
+				{
+					System.out.println(frames);
+					frames = 0;
+					frameCounter = 0;
+				}
 			}
-			time.reset();
-			// sparedtime
-			try {
-				Thread.sleep(renderdelay);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+			if(render)
+			{
+				renderingEngine.render(game.getRootObject());
+				Window.render();
+				frames++;
 			}
-			
+			else
+			{
+				try
+				{
+					Thread.sleep(1);
+				}
+				catch (InterruptedException e)
+				{
+					e.printStackTrace();
+				}
 			}
 		}
-		clean();
-	}
-	private void render(){
-		Rengine.render(game);
-		Window.render();
+		
+		cleanUp();
 	}
 	
-	private  void clean(){
-		Window.closeWindow();
+	private void cleanUp()
+	{
+		Window.dispose();
 	}
-	
 }

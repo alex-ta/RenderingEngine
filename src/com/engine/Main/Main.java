@@ -1,15 +1,13 @@
-package com.engine.Main;
+package com.engine.main;
 
-import com.engine.Core.CoreEngine;
-import com.engine.Core.Window;
+import com.engine.core.CoreEngine;
 
-public class Main {
-	
-	
-	public static void main(String[] args){
-		Window.createWindow(600,600,"Hallo");
-		CoreEngine game = new CoreEngine(new TestGame());	
-		game.start(45f);
-		
+public class Main
+{
+	public static void main(String[] args)
+	{
+		CoreEngine engine = new CoreEngine(800, 600, 60, new TestGame());
+		engine.createWindow("3D Game Engine");
+		engine.start();
 	}
 }

@@ -1,74 +1,61 @@
-package com.engine.Components;
-import com.engine.Core.RenderingEngine;
-import com.engine.Input.InputHandler;
-import com.engine.Input.MouseW;
-import com.engine.Math.Matrix;
-import com.engine.Math.Quaternion;
-import com.engine.Math.Vector3D;
-import com.engine.Scenegraph.GameComponent;
-import com.engine.Shaders.Shader;
+package com.engine.components;
 
-public class Camera extends GameComponent {
-	public static final Vector3D yAx = new Vector3D(0,1,0);
+import com.engine.core.*;
+import com.engine.rendering.objects.RenderingEngine;
+import com.math.Matrix;
+import com.math.Vector2D;
+import com.math.Vector3D;
+
+public class Camera extends GameComponent
+{
+	public static final Vector3D yAxis = new Vector3D(0,1,0);
 
 	private Matrix projection;
-	private final float rotspeed = 0.9f;
-	private final float movespeed = 0.006f;
-		
-	public Camera(float fov, float aspectRatio, float zNear, float zFar){
-		this.projection = new Matrix().initPerspective(fov, aspectRatio, zNear, zFar);
+
+	public Camera(float fov, float aspect, float zNear, float zFar)
+	{
+		this.projection = new Matrix().initPerspective(fov, aspect, zNear, zFar);
 	}
-		
-	public Matrix getViewProjection(){
-		Matrix cameraRotation = parent.getTransform().getRotation().toRoationMatrix();
-		Matrix cameraTranslation = new Matrix().initTranslation(parent.getTransform().getTranslation());
+
+	public Matrix getViewProjection()
+	{
+		Matrix cameraRotation = getTransform().getTransformedRot().conjugate().toRotationMatrix();
+		Vector3D cameraPos = getTransform().getTransformedPos().mul(-1);
+
+		Matrix cameraTranslation = new Matrix().initTranslation(cameraPos.getX(), cameraPos.getY(), cameraPos.getZ());
+
 		return projection.mul(cameraRotation.mul(cameraTranslation));
 	}
-	
-	public void move(Vector3D dir, float a){
-		parent.getTransform().setTranslation(parent.getTransform().getTranslation().add(dir.mul(a)));
-	}
-	
-	
-	
-	public Vector3D getPos() {
-		return parent.getTransform().getTranslation();
-	}
-
 
 	@Override
-	public void update() {
-		// TODO Auto-generated method stub
+	public void addToRenderingEngine(RenderingEngine renderingEngine)
+	{
+		renderingEngine.addCamera(this);
+	}
+
+	@Override
+	public void input(float delta)
+	{
+		float sensitivity = 0.5f;
+		float movAmt = (float)(10 * delta);
 		
-	}
 
-	@Override
-	public void render(Shader shader) {
-		// TODO Auto-generated method stub
-		
-	}
+		if(Input.isMoveforward())
+			move(getTransform().getRot().getForward(), movAmt);
+		if(Input.isMovebackwards())
+			move(getTransform().getRot().getForward(), -movAmt);
+		if(Input.isMoveleft())
+			move(getTransform().getRot().getLeft(), -movAmt);
+		if(Input.isMoveright())
+			move(getTransform().getRot().getRight(), -movAmt);
 	
-	@Override
-	public void addToREngine(RenderingEngine engine) {
-		engine.addCamera(this);
+		getTransform().rotate(yAxis, (float) Math.toRadians(-MouseW.getDeltaMovement().getY() * sensitivity));
+		getTransform().rotate(getTransform().getRot().getRight(), (float) Math.toRadians(MouseW.getDeltaMovement().getX() * sensitivity));
+	
 	}
 
-	@Override
-	public void input(InputHandler input) {
-		if(input.isMoveleft()){
-			this.move(parent.getTransform().getRotation().getLeft(),movespeed);
-		}
-		if(input.isMoveright()){
-			this.move(parent.getTransform().getRotation().getRight(),movespeed);
-		}
-		if(input.isMoveforward()){
-			this.move(parent.getTransform().getRotation().getForward(),-movespeed);
-		}
-		if(input.isMovebackwards()){
-			this.move(parent.getTransform().getRotation().getForward(),movespeed);
-		}
-		parent.getTransform().setRotation(parent.getTransform().getRotation().mul(new Quaternion().initRotation(MouseW.getDeltaMovement().y*rotspeed,yAx)).normalize());
-		parent.getTransform().setRotation(parent.getTransform().getRotation().mul(new Quaternion().initRotation(MouseW.getDeltaMovement().x*rotspeed,parent.getTransform().getRotation().getRight())).normalize());
+	public void move(Vector3D dir, float amt)
+	{
+		getTransform().setPos(getTransform().getPos().add(dir.mul(amt)));
 	}
-
 }

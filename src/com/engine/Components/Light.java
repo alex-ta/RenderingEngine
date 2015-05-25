@@ -1,60 +1,54 @@
-package com.engine.Components;
-import com.engine.Scenegraph.*;
-import com.engine.Shaders.ForwardNormalLight;
-import com.engine.Shaders.Shader;
-import com.engine.Core.RenderingEngine;
-import com.engine.Input.InputHandler;
-import com.engine.Math.Transform;
-import com.engine.Math.Vector3D;
+package com.engine.components;
 
-public abstract class Light extends GameComponent {
-private Vector3D color;
-private float intensity;
-private Shader shader;
+import com.engine.Shader.Shader;
+import com.engine.rendering.objects.RenderingEngine;
+import com.math.Vector3D;
 
-public Light(Vector3D color,float intensity){
-	this.color = color;
-	this.intensity = intensity;
-	this.setShader(ForwardNormalLight.getShader());
+public class Light extends GameComponent
+{
+	private Vector3D color;
+	private float intensity;
+	private Shader shader;
 	
-}
+	public Light(Vector3D color, float intensity)
+	{
+		this.color = color;
+		this.intensity = intensity;
+	}
 
-public Vector3D getColor() {
-	return color;
-}
+	@Override
+	public void addToRenderingEngine(RenderingEngine renderingEngine)
+	{
+		renderingEngine.addLight(this);
+	}
 
-public void setColor(Vector3D color) {
-	this.color = color;
-}
+	public void setShader(Shader shader)
+	{
+		this.shader = shader;
+	}
 
-public float getIntensity() {
-	return intensity;
-}
+	public Shader getShader()
+	{
+		return shader;
+	}
 
-public void setIntensity(float intensity) {
-	this.intensity = intensity;
-}
+	public Vector3D getColor()
+	{
+		return color;
+	}
 
-protected void setShader  (Shader shader){
-	this.shader = shader;
-}
+	public void setColor(Vector3D color)
+	{
+		this.color = color;
+	}
 
-public Shader getShader(){
-	return shader;
-}
+	public float getIntensity()
+	{
+		return intensity;
+	}
 
-@Override
-public void update() {}
-
-@Override
-public void render(Shader shader) {}
-
-@Override
-public void input(InputHandler input){}
-
-@Override
-public void addToREngine(RenderingEngine engine) {
-	getShader().setRenderingEngine(engine);
-	engine.addLight(this);
-}
+	public void setIntensity(float intensity)
+	{
+		this.intensity = intensity;
+	}
 }

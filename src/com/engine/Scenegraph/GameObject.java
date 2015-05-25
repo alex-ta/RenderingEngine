@@ -1,72 +1,79 @@
-package com.engine.Scenegraph;
+package com.engine.scenegraph;
+
+import com.engine.Shader.Shader;
+import com.engine.components.GameComponent;
+import com.engine.rendering.objects.RenderingEngine;
+import com.math.Transform;
 
 import java.util.ArrayList;
 
-import com.engine.Core.RenderingEngine;
-import com.engine.Input.InputHandler;
-import com.engine.Math.Transform;
-import com.engine.Shaders.Shader;
-
-public class GameObject {
+public class GameObject
+{
 	private ArrayList<GameObject> children;
 	private ArrayList<GameComponent> components;
 	private Transform transform;
-	
-	
-	public GameObject(){
+
+	public GameObject()
+	{
 		children = new ArrayList<GameObject>();
 		components = new ArrayList<GameComponent>();
 		transform = new Transform();
 	}
-	
-	public Transform getTransform(){
-		return transform;
-	}
-	
-	public GameObject addChild(GameObject child){
+
+	public void addChild(GameObject child)
+	{
 		children.add(child);
-		return this;
-	}
-	
-	public GameObject addCompontent(GameComponent component){
-		components.add(component);
-		component.setParent(this);
-		return this;
-	}
-	
-	public void update(){
-		
-		for(GameComponent component: components){
-			component.update();
-		}
-		
-		for(GameObject child:children){
-			child.update();
-		}
-	}
-	public void render(Shader shader){
-		for(GameComponent component: components){
-			component.render(shader);
-		}
-		for(GameObject child:children){
-			child.render(shader);
-		}
-	}
-	
-	public void input(InputHandler input){
-		for(GameComponent component: components){
-			component.input(input);
-		}
-		for(GameObject child:children){
-			child.input(input);
-		}
+		child.getTransform().setParent(transform);
 	}
 
-	public void addToREngine(RenderingEngine engine) {
-		for(GameComponent component: components){
-			component.addToREngine(engine);
-		}
-		for(GameObject child:children)
-			child.addToREngine(engine);
+	public GameObject addComponent(GameComponent component)
+	{
+		components.add(component);
+		component.setParent(this);
+
+		return this;
+	}
+
+	public void input(float delta)
+	{
+		transform.update();
+
+		for(GameComponent component : components)
+			component.input(delta);
+
+		for(GameObject child : children)
+			child.input(delta);
+	}
+
+	public void update(float delta)
+	{
+		for(GameComponent component : components)
+			component.update(delta);
+
+		for(GameObject child : children)
+			child.update(delta);
+	}
+
+	public void render(Shader shader)
+	{
+		for(GameComponent component : components)
+			component.render(shader);
+
+		for(GameObject child : children)
+			child.render(shader);
+	}
+
+	public void addToRenderingEngine(RenderingEngine renderingEngine)
+	{
+		for(GameComponent component : components)
+			component.addToRenderingEngine(renderingEngine);
+
+		for(GameObject child : children)
+			child.addToRenderingEngine(renderingEngine);
+	}
+
+	public Transform getTransform()
+	{
+		return transform;
 	}
 }
