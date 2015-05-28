@@ -1,6 +1,7 @@
 package com.engine.rendering.objects;
 
 import com.engine.core.Util;
+import com.engine.rendering.loader.*;
 import com.math.Vector3D;
 
 import org.lwjgl.opengl.GL15;
@@ -112,60 +113,26 @@ public class Mesh
 			System.exit(1);
 		}
 		
+		OBJModel test = new OBJModel("./res/models/"+fileName);
+		IndexModel model = test.toIndexedModel();
+		model.calcNormals();
+		
 		ArrayList<Vertex> vertices = new ArrayList<Vertex>();
-		ArrayList<Integer> indices = new ArrayList<Integer>();
 		
-		BufferedReader meshReader = null;
-		
-		try
-		{
-			meshReader = new BufferedReader(new FileReader("./res/models/" + fileName));
-			String line;
+		for(int i =0; i< model.length(); i++){
+			vertices.add(new Vertex(model.getPosition(i),model.getTexCoord(i),model.getNormal(i)));
 			
-			while((line = meshReader.readLine()) != null)
-			{
-				String[] tokens = line.split(" ");
-				tokens = Util.removeEmptyStrings(tokens);
-				
-				if(tokens.length == 0 || tokens[0].equals("#"))
-					continue;
-				else if(tokens[0].equals("v"))
-				{
-					vertices.add(new Vertex(new Vector3D(Float.valueOf(tokens[1]),
-														 Float.valueOf(tokens[2]),
-														 Float.valueOf(tokens[3]))));
-				}
-				else if(tokens[0].equals("f"))
-				{
-					indices.add(Integer.parseInt(tokens[1].split("/")[0]) - 1);
-					indices.add(Integer.parseInt(tokens[2].split("/")[0]) - 1);
-					indices.add(Integer.parseInt(tokens[3].split("/")[0]) - 1);
-					
-					if(tokens.length > 4)
-					{
-						indices.add(Integer.parseInt(tokens[1].split("/")[0]) - 1);
-						indices.add(Integer.parseInt(tokens[3].split("/")[0]) - 1);
-						indices.add(Integer.parseInt(tokens[4].split("/")[0]) - 1);
-					}
-				}
-			}
-			
-			meshReader.close();
-			
-			Vertex[] vertexData = new Vertex[vertices.size()];
-			vertices.toArray(vertexData);
-			
-			Integer[] indexData = new Integer[indices.size()];
-			indices.toArray(indexData);
-			
-			addVertices(vertexData, Util.toIntArray(indexData), true);
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-			System.exit(1);
 		}
 		
+		Vertex[] vertexData = new Vertex[vertices.size()];
+		vertices.toArray(vertexData);
+		
+		Integer[] indexData = new Integer[model.getIndices().size()];
+		model.getIndices().toArray(indexData);
+		
+		addVertices(vertexData, Util.toIntArray(indexData), false);
+	
 		return null;
 	}
+	
 }
