@@ -114,13 +114,13 @@ public class Mesh
 		}
 		
 		OBJModel test = new OBJModel("./res/models/"+fileName);
-		IndexModel model = test.toIndexedModel();
+		IndexedModel model = test.toIndexedModel();
 		model.calcNormals();
 		
 		ArrayList<Vertex> vertices = new ArrayList<Vertex>();
 		
-		for(int i =0; i< model.length(); i++){
-			vertices.add(new Vertex(model.getPosition(i),model.getTexCoord(i),model.getNormal(i)));
+		for(int i =0; i< model.getPositions().size(); i++){
+			vertices.add(new Vertex(model.getPositions().get(i),model.getTexCoords().get(i),model.getNormals().get(i)));
 			
 		}
 		
