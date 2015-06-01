@@ -1,5 +1,6 @@
 package com.engine.core;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -86,5 +87,9 @@ public class Util
 			result[i] = data[i].intValue();
 		
 		return result;
+	}
+
+	public static ByteBuffer createByteBuffer(int size) {
+		return BufferUtils.createByteBuffer(size);
 	}
 }

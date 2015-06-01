@@ -17,31 +17,7 @@ public class ForwardPointLight extends Shader
 
 	private ForwardPointLight()
 	{
-		super();
-
-		addVertexShaderFromFile("forward-point.vs");
-		addFragmentShaderFromFile("forward-point.fs");
-
-		setAttribLocation("position", 0);
-		setAttribLocation("texCoord", 1);
-		setAttribLocation("normal", 2);
-
-		compileShader();
-
-		addUniform("model");
-		addUniform("MVP");
-
-		addUniform("specularIntensity");
-		addUniform("specularPower");
-		addUniform("camera");
-
-		addUniform("pointLight.base.color");
-		addUniform("pointLight.base.intensity");
-		addUniform("pointLight.atten.constant");
-		addUniform("pointLight.atten.linear");
-		addUniform("pointLight.atten.exponent");
-		addUniform("pointLight.position");
-		addUniform("pointLight.range");
+		super("forward-point");
 	}
 
 	public void updateUniforms(Transform transform, Material material, RenderingEngine engine)

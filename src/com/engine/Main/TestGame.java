@@ -100,6 +100,9 @@ public class TestGame extends Game
 		testMesh3.getTransform().getPos().set(5,5,5);
 		testMesh3.getTransform().setRot(new Quaternion(new Vector3D(1,0,0),(float)Math.toRadians(-45)));
 		
+		addChild(new GameObject().addComponent(new MeshRenderer(new Mesh("monkey3.obj"),material)));
+		
+		
 		directionalLight.getTransform().setRot(new Quaternion(new Vector3D(1,0,0), (float)Math.toRadians(-45)));
 	}
 }
