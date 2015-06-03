@@ -1,29 +1,36 @@
 package com.engine.rendering.objects;
 
-import com.engine.Shader.ForwardNormalLight;
 import com.engine.Shader.Shader;
 import com.engine.components.Light;
 import com.engine.components.Camera;
+import com.engine.rendering.ressource.MappedValues;
 import com.engine.scenegraph.GameObject;
 import com.math.Vector3D;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL32.GL_DEPTH_CLAMP;
 
-public class RenderingEngine
-{
-	private Camera mainCamera;
-	private Vector3D ambientLight;
-
-	//"More Permanent" Structure
+public class RenderingEngine extends MappedValues
+{	
+	private HashMap<String,Integer> samplerMap;
 	private ArrayList<Light> lights;
 	private Light activeLight;
-
+	
+	private Shader normalLight;
+	private Camera mainCamera;
+	
 	public RenderingEngine()
 	{
+		super();
 		lights = new ArrayList<Light>();
+		samplerMap = new HashMap<String,Integer>();
+		samplerMap.put("diffuse", 0);
+		addVector3D("normlight",new Vector3D(0.1f,0.1f,0.1f));
+		normalLight = new Shader("forward-normlight");
+		
+		
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 		glFrontFace(GL_CW);
@@ -32,13 +39,7 @@ public class RenderingEngine
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_TEXTURE_2D);
 		
-		ambientLight = new Vector3D(0.1f, 0.1f, 0.1f);
 }
-
-	public Vector3D getNormalLight()
-	{
-		return ambientLight;
-	}
 
 	public void render(GameObject object)
 	{
@@ -46,10 +47,7 @@ public class RenderingEngine
 
 		lights.clear();
 		object.addToRenderingEngine(this);
-
-		Shader forwardAmbient = ForwardNormalLight.getShader();
-
-		object.render(forwardAmbient,this);
+		object.render(normalLight,this);
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE, GL_ONE);
@@ -71,24 +69,6 @@ public class RenderingEngine
 	{
 		//TODO: Stencil Buffer
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	}
-
-	private static void setTextures(boolean enabled)
-	{
-		if(enabled)
-			glEnable(GL_TEXTURE_2D);
-		else
-			glDisable(GL_TEXTURE_2D);
-	}
-
-	private static void unbindTextures()
-	{
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-
-	private static void setClearColor(Vector3D color)
-	{
-		glClearColor(color.getX(), color.getY(), color.getZ(), 1.0f);
 	}
 
 	public static String getOpenGLVersion()
@@ -119,5 +99,9 @@ public class RenderingEngine
 	public void setMainCamera(Camera mainCamera)
 	{
 		this.mainCamera = mainCamera;
+	}
+
+	public int getSamplerSlot(String name) {
+		return samplerMap.get(name);
 	}
 }

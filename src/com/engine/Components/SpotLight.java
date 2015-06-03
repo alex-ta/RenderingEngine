@@ -1,6 +1,6 @@
 package com.engine.components;
 
-import com.engine.Shader.ForwardSpotLight;
+import com.engine.Shader.Shader;
 import com.engine.components.PointLight;
 import com.math.Vector3D;
 
@@ -13,7 +13,7 @@ public class SpotLight extends PointLight
 		super(color, intensity, attenuation);
 		this.cutoff = cutoff;
 
-		setShader(ForwardSpotLight.getShader());
+		setShader(new Shader("forward-spot"));
 	}
 	
 	public Vector3D getDirection()

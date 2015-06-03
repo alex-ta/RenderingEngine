@@ -1,6 +1,5 @@
 package com.engine.components;
-
-import com.engine.Shader.ForwardDirectionalLight;
+import com.engine.Shader.Shader;
 import com.math.Vector3D;
 
 public class DirectionalLight extends Light
@@ -9,7 +8,7 @@ public class DirectionalLight extends Light
 	{
 		super(color, intensity);
 
-		setShader(ForwardDirectionalLight.getShader());
+		setShader(new Shader("forward-directional"));
 	}
 
 	public Vector3D getDirection()

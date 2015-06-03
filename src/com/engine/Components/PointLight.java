@@ -1,6 +1,5 @@
 package com.engine.components;
-
-import com.engine.Shader.ForwardPointLight;
+import com.engine.Shader.Shader;
 import com.math.Vector3D;
 
 public class PointLight extends Light
@@ -21,7 +20,7 @@ public class PointLight extends Light
 
 		this.range = (float)((-b + Math.sqrt(b * b - 4 * a * c))/(2 * a));
 
-		setShader(ForwardPointLight.getShader());
+		setShader(new Shader("forward-point"));
 	}
 
 	public float getRange()

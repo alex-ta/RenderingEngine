@@ -1,5 +1,5 @@
-uniform sampler2D diffuse;
-uniform vec3 camera;
+uniform sampler2D R_diffuse;
+uniform vec3 C_camera;
 uniform float specularIntensity;
 uniform float specularPower;
 
@@ -45,7 +45,7 @@ vec4 calcLight(BaseLight base, vec3 direction, vec3 normal,vec3 worldPos)
     {
         diffuseColor = vec4(base.color, 1.0) * base.intensity * diffuseFactor;
         
-        vec3 cameraDirection = normalize(camera - worldPos);
+        vec3 cameraDirection = normalize(C_camera - worldPos);
         //vec3 reflectDirection = normalize(reflect(direction, normal));
         vec3 halfDirection = normalize(cameraDirection-direction);
         

@@ -1,11 +1,13 @@
 package com.engine.Shader;
 
+import com.engine.components.DirectionalLight;
 import com.engine.components.Light;
 import com.engine.components.PointLight;
 import com.engine.components.SpotLight;
 import com.engine.core.*;
 import com.engine.rendering.objects.Material;
 import com.engine.rendering.objects.RenderingEngine;
+import com.engine.rendering.ressource.ShaderResource;
 import com.math.Matrix;
 import com.math.Transform;
 import com.math.Vector3D;
@@ -17,44 +19,99 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-public abstract class Shader
+public class Shader
 {
-	private int program;
-	private HashMap<String, Integer> uniforms;
+	private static HashMap<String,ShaderResource> loadedModels = new HashMap<String,ShaderResource>();
+	
+	private ShaderResource resource;
+	private String fileName;
 	
 	public Shader(String fileName)
 	{
-		program = glCreateProgram();
-		uniforms = new HashMap<String, Integer>();
-		
-		if(program == 0)
-		{
-			System.err.println("Shader creation failed: Could not find valid memory location in constructor");
-			System.exit(1);
+		this.fileName = fileName;
+		ShaderResource oldRes = loadedModels.get(fileName);
+		if(oldRes != null){
+			resource = oldRes;
+			resource.addReference();
+		}else{
+			resource = new ShaderResource();
+			String vshadertxt = loadShader(fileName+".vs");
+			String fshadertxt = loadShader(fileName+".fs");
+			
+			addVertexShader(vshadertxt);
+			addFragmentShader(fshadertxt);
+			
+			addAllAttributes(vshadertxt);
+			compileShader();
+			
+			addAllUniforms(vshadertxt);
+			addAllUniforms(fshadertxt);
 		}
-		
-		String vshadertxt = loadShader(fileName+".vs");
-		String fshadertxt = loadShader(fileName+".fs");
-		
-		addVertexShader(vshadertxt);
-		addFragmentShader(fshadertxt);
-		
-		addAllAttributes(vshadertxt);
-		compileShader();
-		
-		addAllUniforms(vshadertxt);
-		addAllUniforms(fshadertxt);
 	}
 	
 	public void bind()
 	{
-		glUseProgram(program);
+		glUseProgram(resource.getProgram());
 	}
 
-	public abstract void updateUniforms(Transform transform, Material material,RenderingEngine engine);
+	public void updateUniforms(Transform transform, Material material,RenderingEngine engine){
+		
+		Matrix worldMatrix = transform.getTransformation();
+		Matrix MVPMatrix = engine.getMainCamera().getViewProjection().mul(worldMatrix);
+		
+		for(int i=0; i<resource.getUniformNames().size();i++){
+			String name = resource.getUniformNames().get(i);
+			String type = resource.getUniformTypes().get(i);
+			
+			if(name.startsWith("T_")){
+				switch(name){
+				case "T_MVP": setUniform(name,MVPMatrix);
+							  break;
+				case "T_model": setUniform(name,worldMatrix);
+							  break;
+				default: throw new IllegalArgumentException(name +" not supported");	
+				}
+			} else if(name.startsWith("R_")){
+				String unprefixed = name.substring(2);
+				switch(type){
+				case "sampler2D": int samplerSlot = engine.getSamplerSlot(unprefixed);
+							      material.getTexture(unprefixed).bind(samplerSlot);
+							      setUniform(name,samplerSlot);
+								  break;
+				case "vec3":	  setUniform(name,engine.getVector3D(unprefixed));
+								  break;
+				case "float":     setUniform(name,engine.getFloat(unprefixed));
+								  break;
+				case "DirectionalLight":     setUniform(name,(DirectionalLight)engine.getActiveLight());
+				  				  			 break;
+				case "PointLight":  	     setUniform(name,(PointLight)engine.getActiveLight());
+		  			 						 break;
+				case "SpotLight":  		     setUniform(name,(SpotLight)engine.getActiveLight());
+		  			 						 break;
+				default: throw new IllegalArgumentException(type +" not supported by Rendering Engine");	
+				}
+				
+			} else if(name.startsWith("C_")){
+				switch(name){
+				case "C_camera":	setUniform(name,engine.getMainCamera().getTransform().getTransformedPos());
+									break;
+				default:throw new IllegalArgumentException(type +" not supported by Camera");	
+				}
+			} else{
+				switch(type){
+				case "vec3":	  setUniform(name,material.getVector3D(name));
+								  break;
+				case "float":     setUniform(name,material.getFloat(name));
+								  break;
+				default: throw new IllegalArgumentException(type +" not supported by Material");	
+				}
+				
+			}
+				
+		}
+		
+	}
 	
 	private void addAllAttributes(String shadertxt){
 		final String ATTRIBUTE_KEYWORD = "attribute";
@@ -148,43 +205,41 @@ public abstract class Shader
 			String uniformType = uniformLine.substring(0,whiteSpace);
 			
 			
-			addUniformWithCheck(uniformName, uniformType, structs);
+			resource.getUniformNames().add(uniformName);
+			resource.getUniformTypes().add(uniformType);
+			addUniform(uniformName, uniformType, structs);
 			
 			uniformLocation = shadertxt.indexOf("uniform",uniformLocation + UNIFORM.length());
 		}
 	}
 	
 	
-	private void addUniformWithCheck(String name,String type, HashMap<String,ArrayList<GLSLStruct>> struct){
+	private void addUniform(String name,String type, HashMap<String,ArrayList<GLSLStruct>> struct){
 		boolean addThis = true;
 		ArrayList<GLSLStruct> components = (ArrayList<GLSLStruct>) struct.get(type);
 		
 		if(components != null){
 			addThis = false;
 			for(GLSLStruct stru : components){
-				addUniformWithCheck(name+"."+stru.name,stru.type,struct);
+				addUniform(name+"."+stru.name,stru.type,struct);
 			}
 		
 		}
 		
-		if(addThis){
-			addUniform(name);
+		if(!addThis){
+			return;
 		}
 		
-	}
-	
-	private void addUniform(String uniform)
-	{
-		int uniformLocation = glGetUniformLocation(program, uniform);
+		int uniformLocation = glGetUniformLocation(resource.getProgram(), name);
 		
 		if(uniformLocation == 0xFFFFFFFF)
 		{
-			System.err.println("Error: Could not find uniform: " + uniform);
+			System.err.println("Error: Could not find uniform: " + name);
 			new Exception().printStackTrace();
 			System.exit(1);
 		}
 		
-		uniforms.put(uniform, uniformLocation);
+		resource.getUniforms().put(name, uniformLocation);	
 	}
 	
 	private void addVertexShader(String text)
@@ -204,24 +259,24 @@ public abstract class Shader
 
 	private void setAttribLocation(String attributeName, int location)
 	{
-		glBindAttribLocation(program, location, attributeName);
+		glBindAttribLocation(resource.getProgram(), location, attributeName);
 	}
 
 	private void compileShader()
 	{
-		glLinkProgram(program);
+		glLinkProgram(resource.getProgram());
 		
-		if(glGetProgrami(program, GL_LINK_STATUS) == 0)
+		if(glGetProgrami(resource.getProgram(), GL_LINK_STATUS) == 0)
 		{
-			System.err.println(glGetProgramInfoLog(program, 1024));
+			System.err.println(glGetProgramInfoLog(resource.getProgram(), 1024));
 			System.exit(1);
 		}
 		
-		glValidateProgram(program);
+		glValidateProgram(resource.getProgram());
 		
-		if(glGetProgrami(program, GL_VALIDATE_STATUS) == 0)
+		if(glGetProgrami(resource.getProgram(), GL_VALIDATE_STATUS) == 0)
 		{
-			System.err.println(glGetProgramInfoLog(program, 1024));
+			System.err.println(glGetProgramInfoLog(resource.getProgram(), 1024));
 			System.exit(1);
 		}
 	}
@@ -245,7 +300,7 @@ public abstract class Shader
 			System.exit(1);
 		}
 		
-		glAttachShader(program, shader);
+		glAttachShader(resource.getProgram(), shader);
 	}
 	
 	private static String loadShader(String fileName)
@@ -280,48 +335,54 @@ public abstract class Shader
 		return shaderSource.toString();
 	}
 	
-	public void setUniformi(String uniformName, int value)
+	public void setUniform(String uniformName, int value)
 	{
-		glUniform1i(uniforms.get(uniformName), value);
+		glUniform1i(resource.getUniforms().get(uniformName), value);
 	}
 	
-	public void setUniformf(String uniformName, float value)
+	public void setUniform(String uniformName, float value)
 	{
-		glUniform1f(uniforms.get(uniformName), value);
+		glUniform1f(resource.getUniforms().get(uniformName), value);
 	}
 	
 	public void setUniform(String uniformName, Vector3D value)
 	{
-		glUniform3f(uniforms.get(uniformName), value.getX(), value.getY(), value.getZ());
+		glUniform3f(resource.getUniforms().get(uniformName), value.getX(), value.getY(), value.getZ());
 	}
 	
 	public void setUniform(String uniformName, Matrix value)
 	{
-		glUniformMatrix4(uniforms.get(uniformName), true, Util.createFlippedBuffer(value));
+		glUniformMatrix4(resource.getUniforms().get(uniformName), true, Util.createFlippedBuffer(value));
 	}
 	
-	public void setUniformBaseLight(String uniformName, Light baseLight)
+	public void setUniform(String uniformName, Light baseLight)
 	{
 		setUniform(uniformName + ".color", baseLight.getColor());
-		setUniformf(uniformName + ".intensity", baseLight.getIntensity());
+		setUniform(uniformName + ".intensity", baseLight.getIntensity());
 	}
 
-	public void setUniformPointLight(String uniformName, PointLight pointLight)
+	public void setUniform(String uniformName, PointLight pointLight)
 	{
-		setUniformBaseLight(uniformName + ".base", pointLight);
-		setUniformf(uniformName + ".atten.constant", pointLight.getConstant());
-		setUniformf(uniformName + ".atten.linear", pointLight.getLinear());
-		setUniformf(uniformName + ".atten.exponent", pointLight.getExponent());
+		setUniform(uniformName + ".base", (Light) pointLight);
+		setUniform(uniformName + ".atten.constant", pointLight.getConstant());
+		setUniform(uniformName + ".atten.linear", pointLight.getLinear());
+		setUniform(uniformName + ".atten.exponent", pointLight.getExponent());
 		setUniform(uniformName + ".position", pointLight.getTransform().getTransformedPos());
-		setUniformf(uniformName + ".range", pointLight.getRange());
+		setUniform(uniformName + ".range", pointLight.getRange());
 	}
 
-	public void setUniformSpotLight(String uniformName, SpotLight spotLight)
+	public void setUniform(String uniformName, SpotLight spotLight)
 	{
-		setUniformPointLight(uniformName + ".pointLight", spotLight);
+		setUniform(uniformName + ".pointLight", (PointLight)spotLight);
 		setUniform(uniformName + ".direction", spotLight.getDirection());
-		setUniformf(uniformName + ".cutoff", spotLight.getCutoff());
+		setUniform(uniformName + ".cutoff", spotLight.getCutoff());
 	}
 	
+
+	public void setUniform(String uniformName, DirectionalLight directionalLight)
+	{
+		setUniform(uniformName + ".base", (Light)directionalLight);
+		setUniform(uniformName + ".direction", directionalLight.getDirection());
+	}
 	
 }

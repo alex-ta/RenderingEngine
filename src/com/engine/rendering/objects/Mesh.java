@@ -2,6 +2,7 @@ package com.engine.rendering.objects;
 
 import com.engine.core.Util;
 import com.engine.rendering.loader.*;
+import com.engine.rendering.ressource.MeshResource;
 import com.math.Vector3D;
 
 import org.lwjgl.opengl.GL15;
