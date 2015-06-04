@@ -1,5 +1,6 @@
 package com.math;
 
+
 public class Transform
 {
 	private Transform parent;
@@ -41,6 +42,16 @@ public class Transform
 	public void rotate(Vector3D axis, float angle)
 	{
 		rot = new Quaternion(axis, angle).mul(rot).normalized();
+	}
+
+	public void lookAt(Vector3D point, Vector3D up)
+	{
+		rot = getLookAtDirection(point, up);
+	}
+
+	public Quaternion getLookAtDirection(Vector3D point, Vector3D up)
+	{
+		return new Quaternion(new Matrix().initRotation(point.sub(pos).normalized(), up));
 	}
 
 	public boolean hasChanged()

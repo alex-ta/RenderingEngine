@@ -1,6 +1,7 @@
 package com.engine.core;
 
 import com.engine.rendering.objects.RenderingEngine;
+import com.engine.scenegraph.Game;
 
 public class CoreEngine
 {
@@ -20,6 +21,7 @@ public class CoreEngine
 		this.height = height;
 		this.frameTime = 1.0/framerate;
 		input = new Input();
+		game.setEngine(this);
 	}
 
 	public void createWindow(String title)
@@ -113,5 +115,9 @@ public class CoreEngine
 	private void cleanUp()
 	{
 		Window.dispose();
+	}
+
+	public RenderingEngine getRenderngEngine() {
+		return renderingEngine;
 	}
 }

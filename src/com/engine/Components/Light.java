@@ -1,7 +1,9 @@
 package com.engine.components;
 
 import com.engine.Shader.Shader;
+import com.engine.core.CoreEngine;
 import com.engine.rendering.objects.RenderingEngine;
+import com.engine.scenegraph.GameComponent;
 import com.math.Vector3D;
 
 public class Light extends GameComponent
@@ -17,9 +19,9 @@ public class Light extends GameComponent
 	}
 
 	@Override
-	public void addToRenderingEngine(RenderingEngine renderingEngine)
+	public void addToEngine(CoreEngine engine)
 	{
-		renderingEngine.addLight(this);
+		engine.getRenderngEngine().addLight(this);
 	}
 
 	public void setShader(Shader shader)

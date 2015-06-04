@@ -1,9 +1,11 @@
 package com.engine.components;
 
 import com.engine.Shader.Shader;
+import com.engine.core.CoreEngine;
 import com.engine.rendering.objects.Material;
 import com.engine.rendering.objects.Mesh;
 import com.engine.rendering.objects.RenderingEngine;
+import com.engine.scenegraph.GameComponent;
 
 public class MeshRenderer extends GameComponent
 {

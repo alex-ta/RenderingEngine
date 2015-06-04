@@ -45,9 +45,7 @@ public class RenderingEngine extends MappedValues
 	{
 		clearScreen();
 
-		lights.clear();
-		object.addToRenderingEngine(this);
-		object.render(normalLight,this);
+		object.renderAll(normalLight,this);
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE, GL_ONE);
@@ -57,7 +55,7 @@ public class RenderingEngine extends MappedValues
 		for(Light light : lights)
 		{
 			activeLight = light;
-			object.render(light.getShader(),this);
+			object.renderAll(light.getShader(),this);
 		}
 
 		glDepthFunc(GL_LESS);

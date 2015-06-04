@@ -1,22 +1,28 @@
-package com.engine.Scenegraph;
+package com.engine.scenegraph;
 
-import com.engine.Core.RenderingEngine;
-import com.engine.Input.InputHandler;
-import com.engine.Math.Transform;
-import com.engine.Shaders.Shader;
+import com.engine.Shader.Shader;
+import com.engine.core.CoreEngine;
+import com.engine.rendering.objects.RenderingEngine;
+import com.math.Transform;
 
-public abstract class GameComponent {
-	
-	protected GameObject parent;
-	public abstract void input(InputHandler input);
-	public abstract void update();
-	public abstract void render(Shader shader);
-	public abstract void addToREngine(RenderingEngine engine);
-	public void setParent(GameObject parent){
+public abstract class GameComponent
+{
+	private GameObject parent;
+
+	public abstract void input(float delta);
+	public abstract void update(float delta);
+	public abstract void render(Shader shader, RenderingEngine engine);
+
+	public void setParent(GameObject parent)
+	{
 		this.parent = parent;
 	}
-	public GameObject getParent(){
-		return parent;
+
+	public Transform getTransform()
+	{
+		return parent.getTransform();
 	}
-	
+
+	public void addToEngine(CoreEngine engine) {}
 }
+

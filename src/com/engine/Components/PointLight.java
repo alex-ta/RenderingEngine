@@ -1,24 +1,25 @@
 package com.engine.components;
 import com.engine.Shader.Shader;
+import com.engine.rendering.objects.Attenuation;
 import com.math.Vector3D;
 
 public class PointLight extends Light
 {
 	private static final int COLOR_DEPTH = 256;
 
-	private Vector3D attenuation;
+	private Attenuation attenuation;
 	private float range;
 	
-	public PointLight(Vector3D color, float intensity, Vector3D attenuation)
+	public PointLight(Vector3D color, float intensity, Attenuation attenuation)
 	{
 		super(color, intensity);
 		this.attenuation = attenuation;
 
-		float a = attenuation.getZ();
-		float b = attenuation.getY();
-		float c = attenuation.getX() - COLOR_DEPTH * getIntensity() * getColor().max();
+		float exponent = attenuation.getExponent();
+		float linear = attenuation.getLinear();
+		float constant = attenuation.getConstant() - COLOR_DEPTH * getIntensity() * getColor().max();
 
-		this.range = (float)((-b + Math.sqrt(b * b - 4 * a * c))/(2 * a));
+		this.range = (float)((-linear + Math.sqrt(linear * linear - 4 * exponent * constant))/(2 * exponent));
 
 		setShader(new Shader("forward-point"));
 	}
@@ -33,27 +34,7 @@ public class PointLight extends Light
 		this.range = range;
 	}
 
-	public float getConstant() {
-		return attenuation.getX();
-	}
-
-	public void setConstant(float constant) {
-		this.attenuation.setX(constant);
-	}
-
-	public float getLinear() {
-		return attenuation.getY();
-	}
-
-	public void setLinear(float linear) {
-		this.attenuation.setY(linear);
-	}
-
-	public float getExponent() {
-		return attenuation.getZ();
-	}
-
-	public void setExponent(float exponent) {
-		this.attenuation.setZ(exponent);
+	public Attenuation getAttenuation(){
+		return attenuation;
 	}
 }
