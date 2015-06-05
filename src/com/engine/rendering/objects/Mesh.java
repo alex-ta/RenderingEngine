@@ -72,11 +72,13 @@ public class Mesh
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
 		
 		glBindBuffer(GL_ARRAY_BUFFER, resource.getVbo());
 		glVertexAttribPointer(0, 3, GL_FLOAT, false, Vertex.SIZE * 4, 0);
 		glVertexAttribPointer(1, 2, GL_FLOAT, false, Vertex.SIZE * 4, 12);
 		glVertexAttribPointer(2, 3, GL_FLOAT, false, Vertex.SIZE * 4, 20);
+		glVertexAttribPointer(3, 3, GL_FLOAT, false, Vertex.SIZE * 4, 32);
 		
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource.getIbo());
 		glDrawElements(GL_TRIANGLES, resource.getSize(), GL_UNSIGNED_INT, 0);
@@ -84,6 +86,7 @@ public class Mesh
 		glDisableVertexAttribArray(0);
 		glDisableVertexAttribArray(1);
 		glDisableVertexAttribArray(2);
+		glDisableVertexAttribArray(3);
 	}
 	
 	private void calcNormals(Vertex[] vertices, int[] indices)
@@ -127,7 +130,7 @@ public class Mesh
 		ArrayList<Vertex> vertices = new ArrayList<Vertex>();
 		
 		for(int i =0; i< model.getPositions().size(); i++){
-			vertices.add(new Vertex(model.getPositions().get(i),model.getTexCoords().get(i),model.getNormals().get(i)));
+			vertices.add(new Vertex(model.getPositions().get(i),model.getTexCoords().get(i),model.getNormals().get(i),model.getTangents().get(i)));
 			
 		}
 		
