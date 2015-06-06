@@ -5,55 +5,58 @@ import com.engine.scenegraph.Game;
 
 public class CoreEngine
 {
-	private boolean isRunning;
-	private Game game;
-	private RenderingEngine renderingEngine;
-	private double frameTime;
-	private Input input;
+	private boolean         m_isRunning;
+	private Game            m_game;
+	private RenderingEngine m_renderingEngine;
+	private int             m_width;
+	private int             m_height;
+	private double          m_frameTime;
 	
-	public CoreEngine(double framerate, Game game)
+	public CoreEngine(int width, int height, double framerate, Game game)
 	{
-		this.isRunning = false;
-		this.game = game;
-		this.frameTime = 1.0/framerate;
-		input = new Input();
+		this.m_isRunning = false;
+		this.m_game = game;
+		this.m_width = width;
+		this.m_height = height;
+		this.m_frameTime = 1.0/framerate;
 		game.setEngine(this);
-		this.renderingEngine = new RenderingEngine();
 	}
 
-	public static void crateWindow(int width, int height,String title){
-		Window.createWindow(width, height, title);
-	}
-	
-	public void start()
+	public void CreateWindow(String title)
 	{
-		if(isRunning)
+		Window.createWindow(m_width, m_height, title);
+		this.m_renderingEngine = new RenderingEngine();
+	}
+
+	public void Start()
+	{
+		if(m_isRunning)
 			return;
 		
-		run();
+		Run();
 	}
 	
-	public void stop()
+	public void Stop()
 	{
-		if(!isRunning)
+		if(!m_isRunning)
 			return;
 		
-		isRunning = false;
+		m_isRunning = false;
 	}
 	
-	private void run()
+	private void Run()
 	{
-		isRunning = true;
+		m_isRunning = true;
 		
 		int frames = 0;
-		long frameCounter = 0;
+		double frameCounter = 0;
 
-		game.init();
+		m_game.init();
 
 		double lastTime = Time.getTime();
 		double unprocessedTime = 0;
 		
-		while(isRunning)
+		while(m_isRunning)
 		{
 			boolean render = false;
 
@@ -64,19 +67,18 @@ public class CoreEngine
 			unprocessedTime += passedTime;
 			frameCounter += passedTime;
 			
-			while(unprocessedTime > frameTime)
+			while(unprocessedTime > m_frameTime)
 			{
 				render = true;
 				
-				unprocessedTime -= frameTime;
+				unprocessedTime -= m_frameTime;
 				
 				if(Window.isCloseRequested())
-					stop();
+					Stop();
 
-				game.input((float)frameTime);
-				input.update();
+				m_game.input((float) m_frameTime);
 				
-				game.update((float)frameTime);
+				m_game.update((float) m_frameTime);
 				
 				if(frameCounter >= 1.0)
 				{
@@ -87,7 +89,7 @@ public class CoreEngine
 			}
 			if(render)
 			{
-				game.render(renderingEngine);
+				m_game.render(m_renderingEngine);
 				Window.render();
 				frames++;
 			}
@@ -104,15 +106,16 @@ public class CoreEngine
 			}
 		}
 		
-		cleanUp();
+		CleanUp();
 	}
-	
-	private void cleanUp()
+
+	private void CleanUp()
 	{
 		Window.dispose();
 	}
 
-	public RenderingEngine getRenderngEngine() {
-		return renderingEngine;
+	public RenderingEngine getRenderingEngine() {
+		return m_renderingEngine;
 	}
 }
+

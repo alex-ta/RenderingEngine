@@ -21,7 +21,7 @@ public class Light extends GameComponent
 	@Override
 	public void addToEngine(CoreEngine engine)
 	{
-		engine.getRenderngEngine().addLight(this);
+		engine.getRenderingEngine().addLight(this);
 	}
 
 	public void setShader(Shader shader)

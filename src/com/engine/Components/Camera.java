@@ -29,7 +29,7 @@ public class Camera extends GameComponent
 	@Override
 	public void addToEngine(CoreEngine engine)
 	{
-		engine.getRenderngEngine().addCamera(this);
+		engine.getRenderingEngine().addCamera(this);
 	}
 
 	@Override
