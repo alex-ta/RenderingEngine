@@ -27,6 +27,8 @@ public class RenderingEngine extends MappedValues
 		lights = new ArrayList<Light>();
 		samplerMap = new HashMap<String,Integer>();
 		samplerMap.put("diffuse", 0);
+		samplerMap.put("normalMap", 1);
+		samplerMap.put("dispMap", 2);
 		addVector3D("normlight",new Vector3D(0.1f,0.1f,0.1f));
 		normalLight = new Shader("forward-normlight");
 		

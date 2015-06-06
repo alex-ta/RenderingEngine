@@ -6,8 +6,8 @@ public class Main
 {
 	public static void main(String[] args)
 	{
-		CoreEngine engine = new CoreEngine(800, 600, 60, new TestGame());
-		engine.createWindow("3D Game Engine");
+		CoreEngine.crateWindow(800,600, "Game");
+		CoreEngine engine = new CoreEngine(60, new TestGame());
 		engine.start();
 	}
 }

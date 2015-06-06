@@ -1,13 +1,11 @@
 #version 120
-#include "lighting.glh"
-
-varying vec2 texture;
-varying vec3 normal0;
-varying vec3 worldPos0;
+#include "lighting.fsh"
 
 uniform SpotLight R_spotLight;
 
-void main()
+vec4 CalcLightingEffect(vec3 normal, vec3 worldPos)
 {
-    gl_FragColor = texture2D(R_diffuse, texture.xy) * calcSpotLight(R_spotLight, normalize(normal0),worldPos0);
+	return CalcSpotLight(R_spotLight, normal, worldPos);
 }
+
+#include "lightingMain.fsh"

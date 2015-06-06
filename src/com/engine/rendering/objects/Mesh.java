@@ -61,7 +61,7 @@ public class Mesh
 		resource = new MeshResource(indices.length);
 		
 		glBindBuffer(GL_ARRAY_BUFFER, resource.getVbo());
-		GL15.glBufferData(GL_ARRAY_BUFFER, Util.createFlippedBuffer(vertices), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, Util.createFlippedBuffer(vertices), GL_STATIC_DRAW);
 		
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, resource.getIbo());
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, Util.createFlippedBuffer(indices), GL_STATIC_DRAW);
@@ -125,8 +125,7 @@ public class Mesh
 		
 		OBJModel test = new OBJModel("./res/models/"+fileName);
 		IndexedModel model = test.toIndexedModel();
-		model.calcNormals();
-		
+
 		ArrayList<Vertex> vertices = new ArrayList<Vertex>();
 		
 		for(int i =0; i< model.getPositions().size(); i++){
@@ -142,7 +141,7 @@ public class Mesh
 		
 		addVertices(vertexData, Util.toIntArray(indexData), false);
 	
-		return null;
+		return this;
 	}
 	
 }

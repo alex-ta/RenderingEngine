@@ -47,8 +47,19 @@ public class Shader
 			
 			addAllUniforms(vshadertxt);
 			addAllUniforms(fshadertxt);
+			
+			loadedModels.put(fileName, resource);
 		}
 	}
+	@Override
+	protected void finalize()
+	{
+		if(resource.removeReference() && !fileName.isEmpty())
+		{
+			loadedModels.remove(fileName);
+		}
+	}
+
 	
 	public void bind()
 	{
@@ -63,7 +74,8 @@ public class Shader
 		for(int i=0; i<resource.getUniformNames().size();i++){
 			String name = resource.getUniformNames().get(i);
 			String type = resource.getUniformTypes().get(i);
-			
+			String unprefixed = name.substring(2);
+				
 			if(name.startsWith("T_")){
 				switch(name){
 				case "T_MVP": setUniform(name,MVPMatrix);
@@ -72,13 +84,13 @@ public class Shader
 							  break;
 				default: throw new IllegalArgumentException(name +" not supported");	
 				}
-			} else if(name.startsWith("R_")){
-				String unprefixed = name.substring(2);
+			}else if(type.equals("sampler2D")){
+				int samplerSlot = engine.getSamplerSlot(name);
+				material.getTexture(name).bind(samplerSlot);
+				setUniform(name, samplerSlot);
+			}
+			else if(name.startsWith("R_")){
 				switch(type){
-				case "sampler2D": int samplerSlot = engine.getSamplerSlot(unprefixed);
-							      material.getTexture(unprefixed).bind(samplerSlot);
-							      setUniform(name,samplerSlot);
-								  break;
 				case "vec3":	  setUniform(name,engine.getVector3D(unprefixed));
 								  break;
 				case "float":     setUniform(name,engine.getFloat(unprefixed));
@@ -94,7 +106,7 @@ public class Shader
 				
 			} else if(name.startsWith("C_")){
 				switch(name){
-				case "C_camera":	setUniform(name,engine.getMainCamera().getTransform().getTransformedPos());
+				case "C_eyePos":	setUniform(name,engine.getMainCamera().getTransform().getTransformedPos());
 									break;
 				default:throw new IllegalArgumentException(type +" not supported by Camera");	
 				}

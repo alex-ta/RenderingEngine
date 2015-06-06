@@ -8,28 +8,23 @@ public class CoreEngine
 	private boolean isRunning;
 	private Game game;
 	private RenderingEngine renderingEngine;
-	private int width;
-	private int height;
 	private double frameTime;
 	private Input input;
 	
-	public CoreEngine(int width, int height, double framerate, Game game)
+	public CoreEngine(double framerate, Game game)
 	{
 		this.isRunning = false;
 		this.game = game;
-		this.width = width;
-		this.height = height;
 		this.frameTime = 1.0/framerate;
 		input = new Input();
 		game.setEngine(this);
-	}
-
-	public void createWindow(String title)
-	{
-		Window.createWindow(width, height, title);
 		this.renderingEngine = new RenderingEngine();
 	}
 
+	public static void crateWindow(int width, int height,String title){
+		Window.createWindow(width, height, title);
+	}
+	
 	public void start()
 	{
 		if(isRunning)

@@ -9,11 +9,8 @@ public abstract class Game
 	protected Material material;
 
 	public Game(){
-		material = new Material();
+		material = new Material(new Texture("bricks.jpg"), new Texture("bricks_normal.jpg"), new Texture("bricks_disp.png"), 0.03f, -0.5f);
 		root = new GameObject();
-		
-		material.addFloat("specularIntensity", 1f);
-		material.addFloat("specularPower", 8f);
 	}
 	
 	public void init() {}
