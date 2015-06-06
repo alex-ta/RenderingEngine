@@ -21,8 +21,8 @@ public class MeshRenderer extends GameComponent
 	@Override
 	public void render(Shader shader,RenderingEngine engine)
 	{
-		shader.bind();
-		shader.updateUniforms(getTransform(), material, engine);
+		shader.Bind();
+		shader.UpdateUniforms(getTransform(), material, engine);
 		mesh.draw();
 	}
 

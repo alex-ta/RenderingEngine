@@ -5,6 +5,7 @@ import com.engine.components.Light;
 import com.engine.components.Camera;
 import com.engine.rendering.ressource.MappedValues;
 import com.engine.scenegraph.GameObject;
+import com.math.Transform;
 import com.math.Vector3D;
 
 import java.util.ArrayList;
@@ -20,6 +21,11 @@ public class RenderingEngine extends MappedValues
 	
 	private Shader normalLight;
 	private Camera mainCamera;
+	
+	public void UpdateUniformStruct(Transform transform, Material material, Shader shader, String uniformName, String uniformType)
+	{
+		throw new IllegalArgumentException(uniformType + " is not a supported type in RenderingEngine");
+	}
 	
 	public RenderingEngine()
 	{
